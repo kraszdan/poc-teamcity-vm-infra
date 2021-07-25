@@ -1,0 +1,8 @@
+teamcity_server_enabled: false
+teamcity_server_db_url: jdbc:postgresql://db:5432/teamcity_db
+teamcity_server_db_user: teamcity
+teamcity_server_db_password: teamcity
+teamcity_server_db_max_connections: 50
+
+teamcity_agents_count: 0
+teamcity_agents_server_url: http://teamcity-node:8111

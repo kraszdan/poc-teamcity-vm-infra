@@ -1,0 +1,11 @@
+teamcity_stack_path: C:/ProgramData/JetBrains/TeamCity
+
+teamcity_server_image: jetbrains/teamcity-server:2021.1.1-nanoserver-1809
+teamcity_server_data_path_src: C:/ProgramData/JetBrains/TeamCity/Data
+teamcity_server_data_path_dst: C:/ProgramData/JetBrains/TeamCity
+teamcity_server_log_path_src: C:/ProgramData/JetBrains/TeamCity/Logs
+teamcity_server_log_path_dst: C:/TeamCity/logs
+
+teamcity_agents_image: jetbrains/teamcity-agent:2021.1.1-nanoserver-1809
+teamcity_agents_config_path_src: C:/ProgramData/JetBrains/TeamCity/Agents
+teamcity_agents_config_path_dst: C:/BuildAgent/conf

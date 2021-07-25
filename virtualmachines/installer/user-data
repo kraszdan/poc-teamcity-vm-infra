@@ -1,0 +1,14 @@
+#cloud-config
+autoinstall:
+  version: 1
+  identity:
+    hostname: teamcity-node
+    username: teamcity
+    password: $5$teamcity.$sys43wvu0Y.EZJNwxnu4a2OJ2PbNlIHIOzAr2HkR5Y1
+  ssh:
+    install-server: yes
+  early-commands:
+    - systemctl stop ssh
+  late-commands:
+    - echo 'teamcity ALL=(ALL) NOPASSWD:ALL' > /target/etc/sudoers.d/teamcity
+    - curtin in-target --target=/target -- chmod 440 /etc/sudoers.d/teamcity

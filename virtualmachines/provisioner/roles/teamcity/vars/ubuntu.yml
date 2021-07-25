@@ -1,0 +1,17 @@
+teamcity_stack_path: /mnt/teamcity
+
+teamcity_server_image: jetbrains/teamcity-server:2021.1.1-linux
+teamcity_server_user: "1000"
+teamcity_server_group: "1000"
+teamcity_server_data_efs_enabled: false
+teamcity_server_data_efs_src: ""
+teamcity_server_data_path_src: /mnt/teamcity/data
+teamcity_server_data_path_dst: /data/teamcity_server/datadir
+teamcity_server_log_path_src: /var/log/teamcity/server
+teamcity_server_log_path_dst: /opt/teamcity/logs
+
+teamcity_agents_image: jetbrains/teamcity-agent:2021.1.1-linux
+teamcity_agents_user: "1000"
+teamcity_agents_group: "1000"
+teamcity_agents_config_path_src: /mnt/teamcity/agents
+teamcity_agents_config_path_dst: /data/teamcity_agent/conf

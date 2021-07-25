@@ -1,0 +1,24 @@
+- name: Ubuntu | Dependencies
+  when: ansible_os_family == 'Debian'
+  tags:
+    - system
+  block:
+    - name: Include OS related variables
+      include_vars: ubuntu.yml
+
+    - name: Install Docker engine
+      include_tasks: ubuntu-docker.yml
+
+    - name: utils
+      include_tasks: ubuntu-utils.yml
+
+- name: Windows | Dependencies
+  when: ansible_os_family == 'Windows'
+  tags:
+    - system
+  block:
+    - name: Include OS related variables
+      include_vars: windows.yml
+
+    - name: Install Docker engines
+      include_tasks: windows-docker.yml

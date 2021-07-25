@@ -1,0 +1,30 @@
+- name: Ubuntu | TeamCity
+  when: ansible_os_family == 'Debian'
+  tags:
+    - teamcity
+  block:
+    - name: Include OS related variables
+      include_vars: ubuntu.yml
+
+    - name: Configuring storage
+      include_tasks: ubuntu-storage.yml
+
+    - name: Configuring stack
+      include_tasks: ubuntu-stack.yml
+
+- name: Windows | TeamCity
+  when: ansible_os_family == 'Windows'
+  tags:
+    - teamcity
+  block:
+    - name: Include OS related variables
+      include_vars: windows.yml
+
+    - name: Configuring storage
+      include_tasks: windows-storage.yml
+
+    - name: Configuring stack
+      include_tasks: windows-stack.yml
+
+    - name: Configuring firewall
+      include_tasks: windows-firewall.yml

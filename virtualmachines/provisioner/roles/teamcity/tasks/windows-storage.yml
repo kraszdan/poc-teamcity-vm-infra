@@ -1,0 +1,34 @@
+- name: Ensure stack directory exists
+  win_file:
+    path: "{{ teamcity_stack_path }}"
+    state: directory
+
+- name: Ensure directories for TeamCity server exist
+  when: teamcity_server_enabled
+  block:
+    - name: Data directory
+      win_file:
+        path: "{{ teamcity_server_data_path_src }}"
+        state: directory
+
+    - name: Config directory
+      win_file:
+        path: "{{ teamcity_server_data_path_src }}/config"
+        state: directory
+
+    - name: Log directory
+      win_file:
+        path: "{{ teamcity_server_log_path_src }}"
+        state: directory
+
+- name: Ensure TeamCity server database is configured
+  win_template:
+    src: database.properties.j2
+    dest: "{{ teamcity_server_data_path_src }}/config/database.properties"
+  when: teamcity_server_enabled
+
+- name: Ensure config directories for TeamCity agents exist
+  win_file:
+    path: "{{ teamcity_agents_config_path_src }}/{{ item }}"
+    state: directory
+  with_sequence: start=0 count="{{ teamcity_agents_count }}" format=agent%02d

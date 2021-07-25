@@ -1,0 +1,57 @@
+- name: Ensure old versions of Docker are not installed
+  package:
+    name:
+      - docker
+      - docker-engine
+    state: absent
+
+- name: Ensure dependencies are installed
+  apt:
+    name:
+      - apt-transport-https
+      - ca-certificates
+      - gnupg
+    state: present
+
+- name: Docker repository
+  block:
+    - name: Add apt key
+      apt_key:
+        url: "{{ docker_apt_gpg_key }}"
+        id: 9DC858229FC7DD38854AE2D88D81803C0EBFCD88
+        state: present
+      register: add_repository_key
+      ignore_errors: false
+
+    - name: Add repository
+      apt_repository:
+        repo: "{{ docker_apt_repository }}"
+        state: present
+        update_cache: true
+
+- name: Install Docker
+  package:
+    name: "{{ docker_package }}"
+    state: present
+  ignore_errors: "{{ ansible_check_mode }}"
+
+- name: Ensure Docker is started and enabled at boot
+  service:
+    name: docker
+    state: started
+    enabled: true
+  ignore_errors: "{{ ansible_check_mode }}"
+
+- name: Check if Docker Compose is installed
+  stat:
+    path: "{{ docker_compose_path }}"
+  register: compose
+
+- name: Download Docker Compose
+  shell: "curl -L '{{ docker_compose_url }}' -o {{ docker_compose_path }}"
+  when: not compose.stat.exists
+
+- name: Make Docker Compose executable
+  file:
+    dest: "{{ docker_compose_path }}"
+    mode: a+x

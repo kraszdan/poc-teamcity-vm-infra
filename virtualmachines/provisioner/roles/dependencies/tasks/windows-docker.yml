@@ -1,0 +1,37 @@
+- name: Check if Docker engine is installed
+  win_command: powershell.exe -
+  args:
+    stdin: Get-Package -Name docker -ProviderName DockerMsftProvider
+  register: engine
+  ignore_errors: yes
+
+- name: Ensure Docker engine is installed
+  when: engine.rc != 0
+  block:
+    - name: NuGet package provider
+      win_command: powershell.exe -
+      args:
+        stdin: Install-PackageProvider -Name NuGet -Force
+
+    - name: DockerMsftProvider package provider
+      win_command: powershell.exe -
+      args:
+        stdin: Install-Module -Name DockerMsftProvider -Repository PSGallery -Force
+
+    - name: Docker engine
+      win_command: powershell.exe -
+      args:
+        stdin: Install-Package -Name docker -ProviderName DockerMsftProvider -Force
+
+- name: Check if Docker Compose is installed
+  win_stat:
+    path: "{{ docker_compose_path }}"
+  register: compose
+
+- name: Docker Compose
+  win_command: powershell.exe -
+  args:
+    stdin: |
+      [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+      Invoke-WebRequest "{{ docker_compose_url }}" -UseBasicParsing -OutFile "{{ docker_compose_path }}"
+  when: not compose.stat.exists

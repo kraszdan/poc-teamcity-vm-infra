@@ -1,0 +1,54 @@
+- name: Ensure stack directory exists
+  file:
+    path: "{{ teamcity_stack_path }}"
+    state: directory
+    owner: "{{ teamcity_server_user }}"
+    group: "{{ teamcity_server_group }}"
+
+- name: Ensure directories for TeamCity server exist
+  when: teamcity_server_enabled
+  block:
+    - name: Data directory
+      file:
+        path: "{{ teamcity_server_data_path_src }}"
+        state: directory
+        owner: "{{ teamcity_server_user }}"
+        group: "{{ teamcity_server_group }}"
+
+    - name: Config directory
+      file:
+        path: "{{ teamcity_server_data_path_src }}/config"
+        state: directory
+        owner: "{{ teamcity_server_user }}"
+        group: "{{ teamcity_server_group }}"
+
+    - name: Log directory
+      file:
+        path: "{{ teamcity_server_log_path_src }}"
+        state: directory
+        owner: "{{ teamcity_server_user }}"
+        group: "{{ teamcity_server_group }}"
+
+- name: Ensure EFS is mounted for Teamcity server
+  mount:
+    path: "{{ teamcity_server_data_path_src }}"
+    src: "{{ teamcity_server_data_efs_src }}"
+    fstype: nfs4
+    opts: nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport,_netdev
+    state: "{% if teamcity_server_data_efs_enabled %}mounted{% else %}absent{% endif %}"
+
+- name: Ensure TeamCity server database is configured
+  template:
+    src: database.properties.j2
+    dest: "{{ teamcity_server_data_path_src }}/config/database.properties"
+    owner: "{{ teamcity_server_user }}"
+    group: "{{ teamcity_server_group }}"
+  when: teamcity_server_enabled
+
+- name: Ensure config directories for TeamCity agents exist
+  file:
+    path: "{{ teamcity_agents_config_path_src }}/{{ item }}"
+    state: directory
+    owner: "{{ teamcity_agents_user }}"
+    group: "{{ teamcity_agents_group }}"
+  with_sequence: start=0 count="{{ teamcity_agents_count }}" format=agent%02d

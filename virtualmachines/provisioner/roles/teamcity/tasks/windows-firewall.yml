@@ -1,0 +1,2 @@
+- name: Ensure firewall is configured for TeamCity server
+  win_command: "netsh firewall {% if teamcity_server_enabled %}add{% else %}delete{% endif %} portopening TCP 8111"

@@ -1,0 +1,5 @@
+- name: TeamCity node setup
+  hosts: all
+  roles:
+    - dependencies
+    - teamcity

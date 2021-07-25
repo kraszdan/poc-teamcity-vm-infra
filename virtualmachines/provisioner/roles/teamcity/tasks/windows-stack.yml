@@ -1,0 +1,10 @@
+- name: Ensure TeamCity stack is configured
+  win_template:
+    src: docker-compose.yml.j2
+    dest: "{{ teamcity_stack_path }}/docker-compose.yml"
+
+- name: Ensure TeamCity stack is up-to-date
+  win_command: docker-compose up --detach --remove-orphans
+  args:
+    chdir: "{{ teamcity_stack_path }}"
+  when: teamcity_server_enabled or teamcity_agents_count > 0

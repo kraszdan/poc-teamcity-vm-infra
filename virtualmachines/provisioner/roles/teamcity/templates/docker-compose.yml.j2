@@ -1,0 +1,34 @@
+services:
+{% if teamcity_server_enabled %}
+  server:
+    image: {{ teamcity_server_image }}
+    restart: unless-stopped
+{% if teamcity_server_user is defined and teamcity_server_group is defined %}
+    user: "{{ teamcity_server_user }}:{{ teamcity_server_group }}"
+{% elif teamcity_server_user is defined %}
+    user: "{{ teamcity_server_user }}"
+{% endif %}
+    environment:
+      TEAMCITY_HTTPS_PROXY_ENABLED: "true"
+    ports:
+      - 8111:8111
+    volumes:
+      - {{ teamcity_server_data_path_src }}:{{ teamcity_server_data_path_dst }}
+      - {{ teamcity_server_log_path_src }}:{{ teamcity_server_log_path_dst }}
+{% endif %}
+
+{% for id in range(0, teamcity_agents_count) %}
+  {{ 'agent%02d' | format(id) }}:
+    image: {{ teamcity_agents_image }}
+    restart: unless-stopped
+{% if teamcity_agents_user is defined and teamcity_agents_group is defined %}
+    user: "{{ teamcity_agents_user }}:{{ teamcity_agents_group }}"
+{% elif teamcity_agents_user is defined %}
+    user: "{{ teamcity_agents_user }}"
+{% endif %}
+    environment:
+      SERVER_URL: {{ teamcity_agents_server_url }}
+    volumes:
+      - {{ teamcity_agents_config_path_src }}/{{ 'agent%02d' | format(id) }}:{{ teamcity_agents_config_path_dst }}
+
+{% endfor %}

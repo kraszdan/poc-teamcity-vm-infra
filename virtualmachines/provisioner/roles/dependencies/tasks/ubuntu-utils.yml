@@ -1,0 +1,5 @@
+- name: Ensure utils are installed
+  package:
+    name:
+      - nfs-common
+    state: present
